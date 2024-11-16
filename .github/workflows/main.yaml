@@ -32,7 +32,7 @@ jobs:
         pip install -r requirements.txt --target=".python_packages/lib/site-packages"
         popd
 
-    - name: Azure Login
+    - name: Azure Login # login
       uses: azure/login@v1
       with:
         client-id: ${{ secrets.CLIENT_ID }}
