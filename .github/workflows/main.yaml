@@ -26,6 +26,7 @@ jobs:
         client-secret: ${{ secrets.CLIENT_SECRET }}
         tenant-id: ${{ secrets.TENANT_ID }}
         subscription-id: ${{ secrets.SUBSCRIPTION_ID }}
+        auth-type: 'servicePrincipal'
 
     - name: Setup Python ${{ env.PYTHON_VERSION }} Environment
       uses: actions/setup-python@v4
