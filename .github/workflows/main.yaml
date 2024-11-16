@@ -3,6 +3,9 @@ name: Deploy Python project to Azure Function App
 on:
   [push]
 
+permissions:
+  id-token: write
+
 env:
   AZURE_FUNCTIONAPP_NAME: 'backendapi123'   # set this to your function app name on Azure
   AZURE_FUNCTIONAPP_PACKAGE_PATH: '.'       # set this to the path to your function app project, defaults to the repository root
@@ -23,6 +26,7 @@ jobs:
         client-secret: ${{ secrets.CLIENT_SECRET }}
         tenant-id: ${{ secrets.TENANT_ID }}
         subscription-id: ${{ secrets.SUBSCRIPTION_ID }}
+        auth-type: 'servicePrincipal'
 
     - name: Setup Python ${{ env.PYTHON_VERSION }} Environment
       uses: actions/setup-python@v4
