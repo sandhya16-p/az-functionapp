@@ -26,6 +26,7 @@ jobs:
         client-secret: ${{ secrets.CLIENT_SECRET }}
         tenant-id: ${{ secrets.TENANT_ID }}
         subscription-id: ${{ secrets.SUBSCRIPTION_ID }}
+        allow-no-subscriptions: true
         auth-type: 'SERVICE_PRINCIPAL'
 
     - name: Setup Python ${{ env.PYTHON_VERSION }} Environment
