@@ -48,4 +48,4 @@ jobs:
         publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
         scm-do-build-during-deployment: true
         remote-build: true
-        package: ./functionapptest16.zip
+        package: .
