@@ -5,10 +5,9 @@
         "name": "backend-api2",                // Name of the input parameter (the blob content)
         "type": "blobTrigger",            // Trigger type: Blob storage
         "direction": "in",                // Direction: incoming
-        "path": "backend-api2/blobfunction.zip",  // The blob container path
+        "path": "mycontainerbackend/functionapptest16.zip",  // The blob container path
         "connection": "AzureWebJobsStorage"  // The connection string to your storage account
       }
     ]
   }
-  
   
