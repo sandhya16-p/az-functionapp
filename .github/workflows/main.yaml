@@ -46,6 +46,6 @@ jobs:
         app-name: backendapi123
         resource-group: DefaultResourceGroup-EUS2
         publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
-        scm-do-build-during-deployment: true
+        scm-do-build-during-deployment: false
         remote-build: true
         package: .
