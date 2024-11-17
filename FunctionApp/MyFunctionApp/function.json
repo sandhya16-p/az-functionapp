@@ -1,13 +1,20 @@
 {
-    "scriptFile": "_init_.py",
-    "bindings": [
-      {
-        "name": "backend-api2",                // Name of the input parameter (the blob content)
-        "type": "blobTrigger",            // Trigger type: Blob storage
-        "direction": "in",                // Direction: incoming
-        "path": "mycontainerbackend/functionapptest16.zip",  // The blob container path
-        "connection": "AzureWebJobsStorage"  // The connection string to your storage account
-      }
-    ]
-  }
-  
+  "scriptFile": "__init__.py",
+  "bindings": [
+    {
+      "authLevel": "anonymous",
+      "type": "httpTrigger",
+      "direction": "in",
+      "name": "req",
+      "methods": [
+        "get",
+        "post"
+      ]
+    },
+    {
+      "type": "http",
+      "direction": "out",
+      "name": "$return"
+    }
+  ]
+}
