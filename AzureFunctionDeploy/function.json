@@ -1,0 +1,19 @@
+{
+    "scriptFile": "__init__.py", 
+    "bindings": [
+      {
+        "authLevel": "function",  // "function", "anonymous", or "admin"
+        "type": "http",
+        "direction": "in",
+        "name": "req",
+        "route": "myroute/{name}",
+        "methods": ["get", "post"]
+      },
+      {
+        "type": "http",
+        "direction": "out",
+        "name": "$return"
+      }
+    ]
+  }
+  
