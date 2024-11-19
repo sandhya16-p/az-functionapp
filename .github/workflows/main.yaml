@@ -28,7 +28,7 @@ jobs:
     - name: Zip the Azure Function Deploy folder
       run: |
         cd AzureFunctionDeploy
-        zip -r AzureFunctionDeploy.zip .
+        zip -r AzureFunctionDeploy.zip ./
           
     - name: Azure Login # login to azure
       uses: azure/login@v1
