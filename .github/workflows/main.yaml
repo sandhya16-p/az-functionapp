@@ -34,7 +34,6 @@ jobs:
       uses: azure/login@v1
       with:
         client-id: ${{ secrets.CLIENT_ID }}
-        client-secret: ${{ secrets.CLIENT_SECRET }}
         tenant-id: ${{ secrets.TENANT_ID }}
         subscription-id: ${{ secrets.SUBSCRIPTION_ID }}
 
@@ -49,7 +48,7 @@ jobs:
         chmod +x AzurefunctionDeploy.zip
         ls -l ./AzureFunctionDeploy.zip
         az functionapp deployment source config-zip \
-          --src "./AzurefunctionDeploy.zip" \
+          --src "../AzurefunctionDeploy.zip" \
           --name "backendapi123" \
           --resource-group "DefaultResourceGroup-EUS2"
 
