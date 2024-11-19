@@ -46,6 +46,8 @@ jobs:
     - name: Build and Deploy to Azure Function App
       run: |
         az functionapp deployment source config-zip \
+          --src ./AzurefunctionDeploy.zip \
           --resource-group "DefaultResourceGroup-EUS2" \
           --name "backendapi123" \
-          --src "./AzurefunctionDeploy.zip"
+          --debug
+
