@@ -44,9 +44,6 @@ jobs:
 
     - name: Build and Deploy to Azure Function App
       run: |
-        pwd
-        chmod +x AzurefunctionDeploy.zip
-        ls -l ./AzureFunctionDeploy.zip
         az functionapp deployment source config-zip \
           --src "../AzurefunctionDeploy.zip" \
           --name "backendapi123" \
