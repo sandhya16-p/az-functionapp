@@ -28,7 +28,7 @@ jobs:
     - name: Zip the Azure Function Deploy folder
       run: |
         cd AzureFunctionDeploy
-        zip -r AzureFunctionDeploy.zip ./
+        zip -r ../AzureFunctionDeploy.zip ./*
           
     - name: Azure Login # login to azure
       uses: azure/login@v1
@@ -47,5 +47,6 @@ jobs:
         az functionapp deployment source config-zip \
           --src "./AzurefunctionDeploy.zip" \
           --name "backendapi123" \
-          --resource-group "DefaultResourceGroup-EUS2"
+          --resource-group "DefaultResourceGroup-EUS2" \
+          --debug
 
