@@ -7,7 +7,7 @@ permissions:
   contents: read
 
 env:
-  AZURE_FUNCTIONAPP_NAME: 'backendapi123'   
+  AZURE_FUNCTIONAPP_NAME: 'backendapi-1'   
   AZURE_FUNCTIONAPP_PACKAGE_PATH: '.'                                  
 
 jobs:
@@ -42,11 +42,13 @@ jobs:
         az account show
         az group list
 
-    - name: Build and Deploy to Azure Function App
-      run: |
-        az functionapp deployment source config-zip \
-          --src "./AzurefunctionDeploy.zip" \
-          --name "backendapi123" \
-          --resource-group "DefaultResourceGroup-EUS2" \
-          --debug
+    - name: 'Run Azure Functions Action'
+      uses: Azure/functions-action@v1
+      id: fa
+      with:
+        app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
+        package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+        publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
+        scm-do-build-during-deployment: true
+        enable-oryx-build: true
 
