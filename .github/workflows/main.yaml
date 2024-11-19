@@ -1,6 +1,6 @@
 name: Deploy Python project to Azure Function App
 on:
-  workflow_dispatch:
+  [push]
 
 permissions:
   id-token: write
