@@ -21,15 +21,15 @@ jobs:
 
     - name: 'Install python Dependencies Using Pip'
       run: |
-        mkdir AzurefunctionDeploy
-        cd ./AzurefunctionDeploy
+        mkdir AzureFunctionDeploy
+        cd ./AzureFunctionDeploy
         python -m pip install --upgrade pip
         pip install -r requirements.txt --target=".python_packages/lib/site-packages"
 
     - name: Zip the Azure Function Deploy folder
       run: |
-        cd AzurefunctionDeploy
-        zip -r ../AzurefunctionDeploy.zip ./*
+        cd AzureFunctionDeploy
+        zip -r ../AzureFunctionDeploy.zip ./*
           
     - name: Azure Login # login to azure
       uses: azure/login@v1
@@ -47,6 +47,6 @@ jobs:
     - name: Build and Deploy to Azure Function App
       run: |
         az functionapp deployment source config-zip \
-          --resource-group DefaultResourceGroup-EUS2 \
-          --name backend-api123 \
-          --src ./blobfunction.zip
+          --resource-group "DefaultResourceGroup-EUS2" \
+          --name "backend-api123" \
+          --src "./AzurefunctionDeploy.zip"
