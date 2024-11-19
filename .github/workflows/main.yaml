@@ -1,18 +1,18 @@
 name: Deploy Python project to Azure Function App
-
 on:
-  [push]
+  workflow_dispatch:
 
 permissions:
   id-token: write
+  contents: read
 
 env:
   AZURE_FUNCTIONAPP_NAME: 'backendapi123'   
   AZURE_FUNCTIONAPP_PACKAGE_PATH: '.' 
-  PYTHON_VERSION: '3.9'                     
+  PYTHON_VERSION: '3.11'                     
 
 jobs:
-  build-and-deploy:
+  deploy-functions:
     runs-on: ubuntu-latest
     environment: azurecloud
     steps:
@@ -23,15 +23,19 @@ jobs:
       uses: actions/setup-python@v4
       with:
         python-version: ${{ env.PYTHON_VERSION }}
+        architecture: x64
 
-    - name: 'Resolve Project Dependencies Using Pip'
-      shell: bash
+    - name: 'Install python Dependencies Using Pip'
       run: |
-        pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
+        cd ./AzurefunctionDeploy
         python -m pip install --upgrade pip
         pip install -r requirements.txt --target=".python_packages/lib/site-packages"
-        popd
 
+    - name: Zip the Azure Function Deploy folder
+      run: |
+        cd AzurefunctionDeploy
+        zip -r ../AzurefunctionDeploy.zip ./*
+          
     - name: Azure Login # login to azure
       uses: azure/login@v1
       with:
@@ -40,12 +44,15 @@ jobs:
         tenant-id: ${{ secrets.TENANT_ID }}
         subscription-id: ${{ secrets.SUBSCRIPTION_ID }}
 
-    - name: Deploy to Azure Function App
-      uses: azure/functions-action@v1
-      with:
-        app-name: backendapi123
-        resource-group: DefaultResourceGroup-EUS2
-        publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
-        scm-do-build-during-deployment: false
-        remote-build: true
-        package: .
+    - name: 'Run az commands'
+        run: |
+          az account show
+          az group list
+
+    - name: Build and Deploy to Azure Function App
+      run: |
+        az functionapp deployment source config-zip \
+          --resource-group "githubactiondemo_group" \
+          --name "githubactiondemo" \
+          --src "./AzurefunctionDeploy.zip"
+          
