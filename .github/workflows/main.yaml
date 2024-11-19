@@ -9,32 +9,18 @@ permissions:
 env:
   AZURE_FUNCTIONAPP_NAME: 'backendapi123'   
   AZURE_FUNCTIONAPP_PACKAGE_PATH: '.' 
-  PYTHON_VERSION: '3.11'                     
-  AZURE_FUNCTIONAPP_NAME: 'backendapi123'   
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: '.' 
-  PYTHON_VERSION: '3.11'                     
+  PYTHON_VERSION: '3.11'                                 
 
 jobs:
   deploy-functions:
-  deploy-functions:
     runs-on: ubuntu-latest
-    environment: azurecloud
     environment: azurecloud
     steps:
     - name: 'Checkout GitHub Action'
       uses: actions/checkout@v3
 
-    - name: Setup Python ${{ env.PYTHON_VERSION }} Environment
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ env.PYTHON_VERSION }}
-        architecture: x64
-        architecture: x64
-
-    - name: 'Install python Dependencies Using Pip'
     - name: 'Install python Dependencies Using Pip'
       run: |
-        cd ./AzurefunctionDeploy
         cd ./AzurefunctionDeploy
         python -m pip install --upgrade pip
         pip install -r requirements.txt --target=".python_packages/lib/site-packages"
@@ -53,29 +39,9 @@ jobs:
         subscription-id: ${{ secrets.SUBSCRIPTION_ID }}
 
     - name: 'Run az commands'
-        run: |
-          az account show
-          az group list
-
-    - name: Build and Deploy to Azure Function App
-
-    - name: Zip the Azure Function Deploy folder
       run: |
-        cd AzurefunctionDeploy
-        zip -r ../AzurefunctionDeploy.zip ./*
-          
-    - name: Azure Login # login to azure
-      uses: azure/login@v1
-      with:
-        client-id: ${{ secrets.CLIENT_ID }}
-        client-secret: ${{ secrets.CLIENT_SECRET }}
-        tenant-id: ${{ secrets.TENANT_ID }}
-        subscription-id: ${{ secrets.SUBSCRIPTION_ID }}
-
-    - name: 'Run az commands'
-        run: |
-          az account show
-          az group list
+        az account show
+        az group list
 
     - name: Build and Deploy to Azure Function App
       run: |
