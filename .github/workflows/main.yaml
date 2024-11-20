@@ -46,9 +46,8 @@ jobs:
       run: |
         az appservice plan create --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
           --name ${{ env.AZURE_APP_SERVICE_PLAN }} \
-          --sku I1 \
-          --location Canada Central
-          
+          --sku I1 
+       
     - name: Create Web App (Azure App Service)
       run: |
         az webapp create --name ${{ env.AZURE_WEBAPP_NAME }} \
