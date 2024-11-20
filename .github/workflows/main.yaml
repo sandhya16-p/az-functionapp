@@ -1,63 +1,70 @@
-name: Deploy Python project to Azure Function App
+name: Deploy App to Azure App Service
+
 on:
-  [push]
+  push:
+    branches:
+      - web-app  # Adjust according to your branch
 
 permissions:
   id-token: write
   contents: read
 
 env:
-  AZURE_FUNCTIONAPP_NAME: 'backendapi-1'   
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: '.'                                  
+  AZURE_RESOURCE_GROUP: DefaultResourceGroup-EUS2
+  AZURE_REGION: Canada Central
+  AZURE_APP_SERVICE_PLAN: myAppServicePlan
+  AZURE_WEBAPP_NAME: myPythonHttpTriggerFunctionApp
+  AZURE_PUBLISH_PROFILE: ${{ secrets.AZURE_PUBLISH_PROFILE }}
 
 jobs:
-  deploy-functions:
+  deploy:
     runs-on: ubuntu-latest
-    environment: azurecloud
+
     steps:
-    - name: 'Checkout GitHub Action'
+    - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: 'Install python Dependencies Using Pip'
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.8'
+
+    - name: Install dependencies
       run: |
-        mkdir -p AzureFunctionDeploy
-        cd AzureFunctionDeploy
-        pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
         python -m pip install --upgrade pip
-        pip install --target=".python_packages/lib/site-packages" -r ../requirements.txt
-        popd
-    
-    - name: Zip the Azure Function Deploy folder
-      run: |
-        cd AzureFunctionDeploy
-        zip -r ../AzureFunctionDeploy.zip . -i ./*
+        pip install -r requirements.txt
 
-
-    - name: Azure Login # login to azure
+    - name: Azure login
       uses: azure/login@v1
       with:
         client-id: ${{ secrets.CLIENT_ID }}
         tenant-id: ${{ secrets.TENANT_ID }}
         subscription-id: ${{ secrets.SUBSCRIPTION_ID }}
 
-    - name: 'Run az commands'
+    - name: Create Azure Resource Group
       run: |
-        az account show
-        az group list
-    
-    # - name: 'Deploy to Azure Function App'
-    #   run: |
-    #     az functionapp deployment source config-zip \
-    #       --resource-group "backendapi1" \
-    #       --name "${{ env.AZURE_FUNCTIONAPP_NAME }}" \
-    #       --src ./AzureFunctionDeploy.zip \
-    #       --debug
-    
-    - name: 'Run Azure Functions Action'
-      uses: Azure/functions-action@v1
+        az group create --name ${{ env.AZURE_RESOURCE_GROUP }} --location ${{ env.AZURE_REGION }}
+
+    - name: Create App Service Plan
+      run: |
+        az appservice plan create --name ${{ env.AZURE_APP_SERVICE_PLAN }} \
+          --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+          --sku B1 --is-linux --location ${{ env.AZURE_REGION }}
+
+    - name: Create Web App (Azure App Service)
+      run: |
+        az webapp create --name ${{ env.AZURE_WEBAPP_NAME }} \
+          --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+          --plan ${{ env.AZURE_APP_SERVICE_PLAN }} \
+          --runtime "PYTHON|3.11"
+
+    - name: Zip the Python app
+      run: |
+        zip -r ../AzureFunctionDeploy.zip . -i ./*
+
+    - name: Deploy to Azure Web App
+      uses: azure/webapps-deploy@v2
       with:
-        app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
-        package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
-        publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
-        scm-do-build-during-deployment: true
-        enable-oryx-build: true
+        app-name: ${{ env.AZURE_WEBAPP_NAME }}
+        publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
+        package: ./AzureFunctionDeploy.zip
