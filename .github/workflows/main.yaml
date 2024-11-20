@@ -8,7 +8,7 @@ permissions:
 
 env:
   AZURE_FUNCTIONAPP_NAME: 'backendapi-1'   
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: './AzureFunctionDeploy.zip'                                  
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: '.'                                  
 
 jobs:
   deploy-functions:
@@ -22,8 +22,10 @@ jobs:
       run: |
         mkdir -p AzureFunctionDeploy
         cd AzureFunctionDeploy
+        pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
         python -m pip install --upgrade pip
         pip install --target=".python_packages/lib/site-packages" -r ../requirements.txt
+        popd
     
     - name: Zip the Azure Function Deploy folder
       run: |
@@ -43,18 +45,17 @@ jobs:
         az account show
         az group list
     
-    - name: 'Deploy to Azure Function App'
-      run: |
-        az functionapp deployment source config-zip \
-          --resource-group "backendapi1" \
-          --name "${{ env.AZURE_FUNCTIONAPP_NAME }}" \
-          --src ./AzureFunctionDeploy.zip \
-          --debug
+    # - name: 'Deploy to Azure Function App'
+    #   run: |
+    #     az functionapp deployment source config-zip \
+    #       --resource-group "backendapi1" \
+    #       --name "${{ env.AZURE_FUNCTIONAPP_NAME }}" \
+    #       --src ./AzureFunctionDeploy.zip \
+    #       --debug
     
-    # - name: 'Run Azure Functions Action'
-    #   uses: Azure/functions-action@v1
-    #   id: fa
-    #   with:
-    #     app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
-    #     package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
-    #     publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
+    - name: 'Run Azure Functions Action'
+      uses: Azure/functions-action@v1
+      with:
+        app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
+        package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+        publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
