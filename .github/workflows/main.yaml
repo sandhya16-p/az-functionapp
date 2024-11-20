@@ -26,19 +26,6 @@ jobs:
         pip install --target=".python_packages/lib/site-packages" -r ../requirements.txt
         zip AzureFunctionDeploy.zip ./* -r
     
-    - name: Upload artifact for deployment job
-      uses: actions/upload-artifact@v4
-      with:
-        name: python-app
-        path: |
-          AzureFunctionDeploy.zip
-          !venv/
-
-    - name: Download artifact from build job
-      uses: actions/download-artifact@v4
-      with:
-        name: python-app
-    
     - name: Unzip artifact for deployment
       run: unzip AzureFunctionDeploy.zip
 
