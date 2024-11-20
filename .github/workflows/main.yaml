@@ -25,9 +25,6 @@ jobs:
         python -m pip install --upgrade pip
         pip install --target=".python_packages/lib/site-packages" -r ../requirements.txt
         zip AzureFunctionDeploy.zip ./* -r
-    
-    - name: Unzip artifact for deployment
-      run: unzip AzureFunctionDeploy.zip
 
     - name: Azure Login # login to azure
       uses: azure/login@v1
