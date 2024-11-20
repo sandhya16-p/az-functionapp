@@ -15,10 +15,12 @@ env:
   AZURE_APP_SERVICE_PLAN: myAppServicePlan
   AZURE_WEBAPP_NAME: myPythonHttpTriggerFunctionApp
   AZURE_PUBLISH_PROFILE: ${{ secrets.AZURE_PUBLISH_PROFILE }}
+  AZURE_WEBAPP_PACKAGE_PATH:'.'
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment: azurecloud
 
     steps:
     - name: Checkout code
