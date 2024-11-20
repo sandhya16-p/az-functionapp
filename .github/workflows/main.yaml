@@ -40,7 +40,7 @@ jobs:
         name: python-app
     
     - name: Unzip artifact for deployment
-        run: unzip AzureFunctionDeploy.zip
+      run: unzip AzureFunctionDeploy.zip
 
     - name: Azure Login # login to azure
       uses: azure/login@v1
