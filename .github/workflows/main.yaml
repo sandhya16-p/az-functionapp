@@ -11,7 +11,6 @@ permissions:
 
 env:
   AZURE_RESOURCE_GROUP: DefaultResourceGroup-EUS2
-  AZURE_REGION: eastus
   AZURE_APP_SERVICE_PLAN: myAppServicePlan
   AZURE_WEBAPP_NAME: myPythonHttpTriggerFunctionApp
   AZURE_PUBLISH_PROFILE: ${{ secrets.AZURE_PUBLISH_PROFILE }}
