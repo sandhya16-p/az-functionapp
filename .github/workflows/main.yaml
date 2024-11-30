@@ -29,7 +29,8 @@ jobs:
     - name: Zip the Azure Function Deploy folder
       run: |
         cd AzureFunctionDeploy
-        zip -r ../AzureFunctionDeploy.zip . -i ./*
+        zip -r ../AzureFunctionDeploy.zip . -x "*.git*" "*.pyc*" # Exclude unnecessary files
+      # zip -r ../AzureFunctionDeploy.zip . -i ./*
 
     - name: Azure Login # login to azure
       uses: azure/login@v2
