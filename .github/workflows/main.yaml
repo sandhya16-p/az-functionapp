@@ -13,7 +13,7 @@ env:
 jobs:
   deploy-functions:
     runs-on: ubuntu-latest
-    environment: azurecloud
+#    environment: azurecloud
     steps:
     - name: 'Checkout GitHub Action'
       uses: actions/checkout@v3
