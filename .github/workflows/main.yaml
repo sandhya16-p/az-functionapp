@@ -8,7 +8,7 @@ permissions:
 
 env:
   AZURE_FUNCTIONAPP_NAME: 'backendapi-1'   
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: '.'                             
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: './AzureFunctionDeploy.zip'                             
 
 jobs:
   deploy-functions:
@@ -62,6 +62,4 @@ jobs:
         package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
         scm-do-build-during-deployment: true
         remote-build: true
-        debug: true
         
-      
