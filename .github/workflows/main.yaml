@@ -8,7 +8,7 @@ permissions:
 
 env:
   AZURE_FUNCTIONAPP_NAME: 'backendapi-1'   
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: 'AzureFunctionDeploy.zip'                                
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: '.'                                
 
 jobs:
   deploy-functions:
