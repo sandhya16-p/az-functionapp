@@ -34,7 +34,7 @@ jobs:
 
 
     - name: Azure Login # login to azure
-      uses: azure/login@v1
+      uses: azure/login@v2
       with:
         client-id: ${{ secrets.CLIENT_ID }}
         tenant-id: ${{ secrets.TENANT_ID }}
@@ -54,7 +54,8 @@ jobs:
     #       --debug
     
     - name: 'Run Azure Functions Action'
-      uses: Azure/functions-action@v1.1.6
+      uses: Azure/functions-action@v1
+      id: deploy-to-function
       with:
         app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
         package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
