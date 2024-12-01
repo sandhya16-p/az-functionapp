@@ -25,6 +25,7 @@ jobs:
         mkdir -p AzureFunctionDeploy
         cd AzureFunctionDeploy
         echo "Deploying from: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}"
+        pip install --target=".python_packages/lib/site-packages" -r ../requirements.txt
         python -m pip install --upgrade pip
     
     - name: Create and start virtual environment
@@ -32,15 +33,10 @@ jobs:
         python -m venv venv
         source venv/bin/activate
     
-    - name: Install dependencies
-      run: pip install -r requirements.txt
-
-    
     - name: Zip the Azure Function Deploy folder
       run: |
         cd AzureFunctionDeploy
-        zip -r ../AzureFunctionDeploy.zip . -x "*.git*" "*.pyc*" # Exclude unnecessary files
-      # zip -r ../AzureFunctionDeploy.zip . -i ./*
+        zip -r ../AzureFunctionDeploy.zip . -x "*.git*" "*.pyc*" 
 
     - name: Upload artifact for deployment job
       uses: actions/upload-artifact@v4
@@ -50,12 +46,12 @@ jobs:
           AzureFunctionDeploy.zip
           !venv/
 
-    - name: Azure Login # login to azure
-      uses: azure/login@v2
-      with:
-        client-id: ${{ secrets.CLIENT_ID }}
-        tenant-id: ${{ secrets.TENANT_ID }}
-        subscription-id: ${{ secrets.SUBSCRIPTION_ID }}
+    # - name: Azure Login # login to azure
+    #   uses: azure/login@v2
+    #   with:
+    #     client-id: ${{ secrets.CLIENT_ID }}
+    #     tenant-id: ${{ secrets.TENANT_ID }}
+    #     subscription-id: ${{ secrets.SUBSCRIPTION_ID }}
 
     - name: 'Run az commands'
       run: |
@@ -90,7 +86,7 @@ jobs:
     
     - name: 'Run Azure Functions Action'
       uses: Azure/functions-action@v1
-      id: fa
+      id: deploy-functions
       with:
         app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
         #slot-name: 'Production'
