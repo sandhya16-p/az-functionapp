@@ -55,6 +55,7 @@ jobs:
           --container-name ${{ env.AZURE_CONTAINER_NAME }} \
           --name AzureFunctionDeploy.zip \
           --file ./AzureFunctionDeploy.zip \
+          --overwrite \
           --auth-mode key
     
     - name: Deploy to Azure Function App from Blob URL
