@@ -17,10 +17,13 @@ jobs:
   deploy-functions:
     runs-on: ubuntu-latest
     steps:
+    
+    # Checkout code
     - name: 'Checkout GitHub Action'
       uses: actions/checkout@v3
-
-    - name: 'Install python Dependencies Using Pip'
+    
+    # Install dependencies
+    - name: 'Install Python Dependencies Using Pip'
       run: |
         mkdir -p AzureFunctionDeploy
         cd AzureFunctionDeploy
@@ -28,37 +31,19 @@ jobs:
         pip install --target=".python_packages/lib/site-packages" -r ../requirements.txt
         python -m pip install --upgrade pip
     
+    # Create and start virtual environment
     - name: Create and start virtual environment
       run: |
         python -m venv venv
         source venv/bin/activate
     
-    - name: Zip the Azure Function Deploy folder
+    # Package the function app into a ZIP file
+    - name: 'Zip the Azure Function Deploy folder'
       run: |
         cd AzureFunctionDeploy
         zip -r ../AzureFunctionDeploy.zip . -x "*.git*" "*.pyc*" 
 
-    - name: Upload artifact for deployment job
-      uses: actions/upload-artifact@v4
-      with:
-        name: python-app
-        path: |
-          AzureFunctionDeploy.zip
-          !venv/
-
-    # - name: Azure Login # login to azure
-    #   uses: azure/login@v2
-    #   with:
-    #     client-id: ${{ secrets.CLIENT_ID }}
-    #     tenant-id: ${{ secrets.TENANT_ID }}
-    #     subscription-id: ${{ secrets.SUBSCRIPTION_ID }}
-
-    - name: 'Run az commands'
-      run: |
-        az login
-        az account show
-        az group list
-
+    # Upload artifact for deployment job (optional)
     - name: Upload ZIP to Azure Blob Storage
       run: |
         az storage blob upload \
@@ -68,31 +53,26 @@ jobs:
           --file ./AzureFunctionDeploy.zip \
           --overwrite \
           --auth-mode key
-    
-    # - name: Deploy to Azure Function App from Blob URL
-    #   run: |
-    #     az functionapp deployment source config-zip \
-    #       --src "https://backendapi1.blob.core.windows.net/backendcontainer/AzureFunctionDeploy.zip?sp=r&st=2024-12-01T06:34:17Z&se=2024-12-01T14:34:17Z&sv=2022-11-02&sr=b&sig=XqZKXnN%2FTakIuGGXnIqfoxUi%2BGDXmqSmgrHUVED4UME%3D" \
-    #       --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
-    #       --name ${{ env.AZURE_FUNCTIONAPP_NAME }} \
-    #       --debug
-    
-    # - name: 'Deploy to Azure Function App'
-    #   run: |
-    #     az functionapp deployment source config-zip \
-    #       --resource-group "DefaultResourceGroup-EUS2" \
-    #       --name "${{ env.AZURE_FUNCTIONAPP_NAME }}" \
-    #       --src ./AzureFunctionDeploy.zip \
-    #       --debug
-    
-    - name: 'Run Azure Functions Action'
-      uses: Azure/functions-action@v1
-      id: deploy-functions
+
+    # Login to Azure
+    - name: Azure Login # login to Azure
+      uses: azure/login@v2
       with:
-        app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
-        #slot-name: 'Production'
-        publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
-        package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
-        scm-do-build-during-deployment: true
-        enable-oryx-build: true
-        remote-build: true
+        client-id: ${{ secrets.CLIENT_ID }}
+        tenant-id: ${{ secrets.TENANT_ID }}
+        subscription-id: ${{ secrets.SUBSCRIPTION_ID }}
+    
+    # Verify Azure account and resource group
+    - name: 'Run az commands'
+      run: |
+        az account show
+        az group list
+    
+    # Deploy directly from the Blob Storage URL
+    - name: Deploy to Azure Function App from Blob URL
+      run: |
+        az functionapp deployment source config-zip \
+          --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+          --name ${{ env.AZURE_FUNCTIONAPP_NAME }} \
+          --src "https://${{ env.AZURE_STORAGE_ACCOUNT_NAME }}.blob.core.windows.net/${{ env.AZURE_CONTAINER_NAME }}/AzureFunctionDeploy.zip" \
+          --debug
