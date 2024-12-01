@@ -32,10 +32,10 @@ jobs:
         python -m pip install --upgrade pip
     
     # Create and start virtual environment
-    - name: Create and start virtual environment
-      run: |
-        python -m venv venv
-        source venv/bin/activate
+    # - name: Create and start virtual environment
+    #   run: |
+    #     python -m venv venv
+    #     source venv/bin/activate
     
     # Package the function app into a ZIP file
     - name: 'Zip the Azure Function Deploy folder'
@@ -50,18 +50,7 @@ jobs:
         path: |
           AzureFunctionDeploy.zip
           !venv/
-
-    # # Upload artifact for deployment job (optional)
-    # - name: Upload ZIP to Azure Blob Storage
-    #   run: |
-    #     az storage blob upload \
-    #       --account-name ${{ env.AZURE_STORAGE_ACCOUNT_NAME }} \
-    #       --container-name ${{ env.AZURE_CONTAINER_NAME }} \
-    #       --name AzureFunctionDeploy.zip \
-    #       --file ./AzureFunctionDeploy.zip \
-    #       --overwrite \
-    #       --auth-mode 
-
+    
     # Login to Azure
     - name: Azure Login # login to Azure
       uses: azure/login@v2
@@ -75,6 +64,17 @@ jobs:
       run: |
         az account show
         az group list
+
+    # # Upload artifact for deployment job (optional)
+    - name: Upload ZIP to Azure Blob Storage
+      run: |
+        az storage blob upload \
+          --account-name ${{ env.AZURE_STORAGE_ACCOUNT_NAME }} \
+          --container-name ${{ env.AZURE_CONTAINER_NAME }} \
+          --name AzureFunctionDeploy.zip \
+          --file ./AzureFunctionDeploy.zip \
+          --overwrite \
+          --auth-mode key
     
     # Deploy directly from the Blob Storage URL
     # - name: Deploy to Azure Function App from Blob URL
