@@ -74,13 +74,13 @@ jobs:
     #       --overwrite \
     #       --auth-mode key
     
-    - name: Deploy to Azure Function App from Blob URL
-      run: |
-        az functionapp deployment source config-zip \
-          --src "https://backendapi1.blob.core.windows.net/backendcontainer/AzureFunctionDeploy.zip?sp=r&st=2024-12-01T06:34:17Z&se=2024-12-01T14:34:17Z&sv=2022-11-02&sr=b&sig=XqZKXnN%2FTakIuGGXnIqfoxUi%2BGDXmqSmgrHUVED4UME%3D" \
-          --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
-          --name ${{ env.AZURE_FUNCTIONAPP_NAME }} \
-          --debug
+    # - name: Deploy to Azure Function App from Blob URL
+    #   run: |
+    #     az functionapp deployment source config-zip \
+    #       --src "https://backendapi1.blob.core.windows.net/backendcontainer/AzureFunctionDeploy.zip?sp=r&st=2024-12-01T06:34:17Z&se=2024-12-01T14:34:17Z&sv=2022-11-02&sr=b&sig=XqZKXnN%2FTakIuGGXnIqfoxUi%2BGDXmqSmgrHUVED4UME%3D" \
+    #       --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+    #       --name ${{ env.AZURE_FUNCTIONAPP_NAME }} \
+    #       --debug
     
     # - name: 'Deploy to Azure Function App'
     #   run: |
@@ -90,15 +90,15 @@ jobs:
     #       --src ./AzureFunctionDeploy.zip \
     #       --debug
     
-    # - name: 'Run Azure Functions Action'
-    #   uses: Azure/functions-action@v1
-    #   id: fa
-    #   with:
-    #     app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
-    #     #slot-name: 'Production'
-    #     publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
-    #     package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
-    #     scm-do-build-during-deployment: true
-    #     enable-oryx-build: false
-    #     remote-build: false
+    - name: 'Run Azure Functions Action'
+      uses: Azure/functions-action@v1
+      id: fa
+      with:
+        app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
+        #slot-name: 'Production'
+        publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
+        package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+        scm-do-build-during-deployment: true
+        enable-oryx-build: true
+        remote-build: false
         
