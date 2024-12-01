@@ -25,7 +25,6 @@ jobs:
         mkdir -p AzureFunctionDeploy
         cd AzureFunctionDeploy
         echo "Deploying from: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}"
-        pip install --target=".python_packages/lib/site-packages" -r ../requirements.txt
         python -m pip install --upgrade pip
     
     - name: Create and start virtual environment
