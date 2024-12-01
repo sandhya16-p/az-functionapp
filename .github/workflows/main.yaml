@@ -52,7 +52,7 @@ jobs:
           --name AzureFunctionDeploy.zip \
           --file ./AzureFunctionDeploy.zip \
           --overwrite \
-          --auth-mode key
+          --auth-mode login
 
     # Login to Azure
     - name: Azure Login # login to Azure
