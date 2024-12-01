@@ -62,17 +62,15 @@ jobs:
         az account show
         az group list
 
-
-
-    # - name: Upload ZIP to Azure Blob Storage
-    #   run: |
-    #     az storage blob upload \
-    #       --account-name ${{ env.AZURE_STORAGE_ACCOUNT_NAME }} \
-    #       --container-name ${{ env.AZURE_CONTAINER_NAME }} \
-    #       --name AzureFunctionDeploy.zip \
-    #       --file ./AzureFunctionDeploy.zip \
-    #       --overwrite \
-    #       --auth-mode key
+    - name: Upload ZIP to Azure Blob Storage
+      run: |
+        az storage blob upload \
+          --account-name ${{ env.AZURE_STORAGE_ACCOUNT_NAME }} \
+          --container-name ${{ env.AZURE_CONTAINER_NAME }} \
+          --name AzureFunctionDeploy.zip \
+          --file ./AzureFunctionDeploy.zip \
+          --overwrite \
+          --auth-mode key
     
     # - name: Deploy to Azure Function App from Blob URL
     #   run: |
