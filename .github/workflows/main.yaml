@@ -26,7 +26,6 @@ jobs:
         cd AzureFunctionDeploy
         echo "Deploying from: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}"
         python -m pip install --upgrade pip
-#        pip install --target=".python_packages/lib/site-packages" -r ../requirements.txt
         ls .python_packages/lib/site-packages
     
     - name: Create and start virtual environment
@@ -51,7 +50,7 @@ jobs:
         path: |
           AzureFunctionDeploy.zip
           !venv/
-          
+
     - name: Azure Login # login to azure
       uses: azure/login@v2
       with:
