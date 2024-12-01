@@ -77,7 +77,7 @@ jobs:
     - name: Deploy to Azure Function App from Blob URL
       run: |
         az functionapp deployment source config-zip \
-          --src https://${{ env.AZURE_STORAGE_ACCOUNT_NAME }}.blob.core.windows.net/${{ env.AZURE_CONTAINER_NAME }}/AzureFunctionDeploy.zip \
+          --src ./AzureFunctionDeploy.zip \
           --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
           --name ${{ env.AZURE_FUNCTIONAPP_NAME }} \
           --debug
