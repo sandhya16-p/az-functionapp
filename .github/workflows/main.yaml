@@ -26,8 +26,17 @@ jobs:
         cd AzureFunctionDeploy
         echo "Deploying from: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}"
         python -m pip install --upgrade pip
-        pip install --target=".python_packages/lib/site-packages" -r ../requirements.txt
+#        pip install --target=".python_packages/lib/site-packages" -r ../requirements.txt
         ls .python_packages/lib/site-packages
+    
+    - name: Create and start virtual environment
+      run: |
+        python -m venv venv
+        source venv/bin/activate
+    
+    - name: Install dependencies
+      run: pip install -r requirements.txt
+
     
     - name: Zip the Azure Function Deploy folder
       run: |
@@ -35,7 +44,14 @@ jobs:
         zip -r ../AzureFunctionDeploy.zip . -x "*.git*" "*.pyc*" # Exclude unnecessary files
       # zip -r ../AzureFunctionDeploy.zip . -i ./*
 
-
+    - name: Upload artifact for deployment job
+      uses: actions/upload-artifact@v4
+      with:
+        name: python-app
+        path: |
+          AzureFunctionDeploy.zip
+          !venv/
+          
     - name: Azure Login # login to azure
       uses: azure/login@v2
       with:
@@ -48,15 +64,17 @@ jobs:
         az account show
         az group list
 
-    - name: Upload ZIP to Azure Blob Storage
-      run: |
-        az storage blob upload \
-          --account-name ${{ env.AZURE_STORAGE_ACCOUNT_NAME }} \
-          --container-name ${{ env.AZURE_CONTAINER_NAME }} \
-          --name AzureFunctionDeploy.zip \
-          --file ./AzureFunctionDeploy.zip \
-          --overwrite \
-          --auth-mode key
+
+
+    # - name: Upload ZIP to Azure Blob Storage
+    #   run: |
+    #     az storage blob upload \
+    #       --account-name ${{ env.AZURE_STORAGE_ACCOUNT_NAME }} \
+    #       --container-name ${{ env.AZURE_CONTAINER_NAME }} \
+    #       --name AzureFunctionDeploy.zip \
+    #       --file ./AzureFunctionDeploy.zip \
+    #       --overwrite \
+    #       --auth-mode key
     
     - name: Deploy to Azure Function App from Blob URL
       run: |
