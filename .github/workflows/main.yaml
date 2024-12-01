@@ -26,7 +26,6 @@ jobs:
         cd AzureFunctionDeploy
         echo "Deploying from: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}"
         python -m pip install --upgrade pip
-        ls .python_packages/lib/site-packages
     
     - name: Create and start virtual environment
       run: |
