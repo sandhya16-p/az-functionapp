@@ -43,16 +43,16 @@ jobs:
         cd AzureFunctionDeploy
         zip -r ../AzureFunctionDeploy.zip . -x "*.git*" "*.pyc*" 
 
-    # Upload artifact for deployment job (optional)
-    - name: Upload ZIP to Azure Blob Storage
-      run: |
-        az storage blob upload \
-          --account-name ${{ env.AZURE_STORAGE_ACCOUNT_NAME }} \
-          --container-name ${{ env.AZURE_CONTAINER_NAME }} \
-          --name AzureFunctionDeploy.zip \
-          --file ./AzureFunctionDeploy.zip \
-          --overwrite \
-          --auth-mode login
+    # # Upload artifact for deployment job (optional)
+    # - name: Upload ZIP to Azure Blob Storage
+    #   run: |
+    #     az storage blob upload \
+    #       --account-name ${{ env.AZURE_STORAGE_ACCOUNT_NAME }} \
+    #       --container-name ${{ env.AZURE_CONTAINER_NAME }} \
+    #       --name AzureFunctionDeploy.zip \
+    #       --file ./AzureFunctionDeploy.zip \
+    #       --overwrite \
+    #       --auth-mode 
 
     # Login to Azure
     - name: Azure Login # login to Azure
