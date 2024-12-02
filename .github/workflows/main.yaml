@@ -92,7 +92,6 @@ jobs:
           --name ${{ env.AZURE_FUNCTIONAPP_NAME }} \
           --src "https://backendapi1.blob.core.windows.net/backendcontainer/AzureFunctionDeploy.zip?sp=racw&st=2024-12-02T07:08:38Z&se=2024-12-02T15:08:38Z&sv=2022-11-02&sr=b&sig=P0L76eZxcireWEkQ3kG7%2BL4zHm84L%2B%2BO1kf1yCUmn48%3D" \
           --debug
-
     # - name: 'Run Azure Functions Action'
     #   uses: Azure/functions-action@v1.1.6
     #   with:
