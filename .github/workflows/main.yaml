@@ -74,11 +74,12 @@ jobs:
           az account show
           az group list
       
-      - name: E2E Run Azure Functions Action
-        uses: ./
-        id: fa
+      - name: "Deploy to Azure Web App"
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
+          slot-name: "Production"
+          publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
           package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
-          remote-build: true
             
