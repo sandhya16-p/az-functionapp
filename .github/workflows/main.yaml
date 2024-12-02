@@ -14,7 +14,7 @@ env:
   AZURE_CONTAINER_NAME: 'backendcontainer'                          
 
 jobs:
-  deploy-functions:
+  build:
     runs-on: ubuntu-latest
     steps:
     
@@ -33,71 +33,48 @@ jobs:
         mkdir -p AzureFunctionDeploy
         cd ./AzureFunctionDeploy
         python -m pip install --upgrade pip
-        pip install azure-storage-blob
         pip install --target=".python_packages/lib/site-packages" -r requirements.txt
-         
-    # Package the function app into a ZIP file
-    - name: 'Zip the Azure Function Deploy folder'
-      run: |
-        cd AzureFunctionDeploy
-        zip -r ../AzureFunctionDeploy.zip ./* 
-
-          
-    # Upload ZIP to Azure Blob Storage
-    - name: Upload deployment ZIP to Azure Blob Storage
-      run: |
-        python -m pip install azure-storage-blob
-        python - <<EOF
-        from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient
-        import os
         
-        # Environment variables
-        account_name = "${{ env.AZURE_STORAGE_ACCOUNT_NAME }}"
-        sas_url = "${{ secrets.AZURE_SAS_URL }}"
-        container_name = "${{ env.AZURE_CONTAINER_NAME }}"
-        zip_file_path = "./AzureFunctionDeploy.zip"
-        blob_name = "AzureFunctionDeploy.zip"
-
-        # Ensure SAS URL is properly formatted in the string
-        print(f"SAS URL: {sas_url}")
-
-        # BlobServiceClient using the SAS URL
-        blob_service_client = BlobServiceClient(account_url=sas_url) 
-
-        container_client = blob_service_client.get_container_client(container_name)
-        blob_client = container_client.get_blob_client(blob_name)
-        with open(zip_file_path, "rb") as data:
-            blob_client.upload_blob(data, overwrite=True)
-
-        print(f"File uploaded to {container_name} as {blob_name}")
-        EOF
-
-    # Login to Azure
-    - name: Azure Login
-      uses: azure/login@v2
+    - name: Upload artifact for deployment jobs
+      uses: actions/upload-artifact@v2
       with:
-        client-id: ${{ secrets.CLIENT_ID }}
-        tenant-id: ${{ secrets.TENANT_ID }}
-        subscription-id: ${{ secrets.SUBSCRIPTION_ID }}
+        name: python-app
+        path: |
+          . 
+          !venv/
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: 'Production'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+   
+
+    steps:
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v2
+        with:
+          name: python-app
+          path: .
+  
+        # Login to Azure
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.CLIENT_ID }}
+          tenant-id: ${{ secrets.TENANT_ID }}
+          subscription-id: ${{ secrets.SUBSCRIPTION_ID }}
+        
+        # Verify Azure account and resource group
+      - name: 'Run az commands'
+        run: |
+          az account show
+          az group list
     
-    # Verify Azure account and resource group
-    - name: 'Run az commands'
-      run: |
-        az account show
-        az group list
-
-    # - name: Build & Deploy to Azure Function App
-    #   run: |
-    #     az functionapp deployment source config-zip \
-    #       --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
-    #       --name ${{ env.AZURE_FUNCTIONAPP_NAME }} \
-    #       --src "https://backendapi1.blob.core.windows.net/backendcontainer/AzureFunctionDeploy.zip?sp=racw&st=2024-12-02T07:08:38Z&se=2024-12-02T15:08:38Z&sv=2022-11-02&sr=b&sig=P0L76eZxcireWEkQ3kG7%2BL4zHm84L%2B%2BO1kf1yCUmn48%3D" \
-    #       --debug
-    - name: 'Deploy to Azure Functions'
-      uses: Azure/functions-action@v1
-      id: deploy-to-function
-      with:
-        app-name: 'backendapi-1'
-        slot-name: 'Production'
-        publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
-        package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+      - name: 'Deploy to Azure Web App'
+        uses: azure/webapps-deploy@v2
+        id: deploy-to-webapp
+        with:
+          app-name: 'backendapi-1'
+          slot-name: 'Production'
+          publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
