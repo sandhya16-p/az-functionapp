@@ -57,7 +57,11 @@ jobs:
         zip_file_path = "./AzureFunctionDeploy.zip"
         blob_name = "AzureFunctionDeploy.zip"
 
-        blob_service_client = BlobServiceClient(account_url=sas_url)  
+        # Ensure SAS URL is properly formatted in the string
+        print(f"SAS URL: {sas_url}")
+
+        # BlobServiceClient using the SAS URL
+        blob_service_client = BlobServiceClient(account_url=sas_url) 
 
         container_client = blob_service_client.get_container_client(container_name)
         blob_client = container_client.get_blob_client(blob_name)
