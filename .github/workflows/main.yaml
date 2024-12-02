@@ -90,7 +90,7 @@ jobs:
         az functionapp deployment source config-zip \
           --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
           --name ${{ env.AZURE_FUNCTIONAPP_NAME }} \
-          --src "https://backendapi1.blob.core.windows.net/backendcontainer/AzureFunctionDeploy.zip?${{ secrets.AZURE_SAS_TOKEN }}" \
+          --src "https://backendapi1.blob.core.windows.net/?sv=2022-11-02&ss=bfqt&srt=sco&sp=rwdlacupiyx&se=2024-12-17T14:45:48Z&st=2024-12-02T06:45:48Z&spr=https&sig=it5oViF7D6tTPwo0LvUOLoL8XLPyCAfgkPIb0lptt%2Fk%3D" \
           --debug
 
     # - name: 'Run Azure Functions Action'
