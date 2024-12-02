@@ -21,35 +21,26 @@ jobs:
     # Checkout code
     - name: 'Checkout GitHub Action'
       uses: actions/checkout@v3
-    
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: "3.11"
+  
     # Install dependencies
     - name: 'Install Python Dependencies Using Pip'
       run: |
         mkdir -p AzureFunctionDeploy
-        cd AzureFunctionDeploy
-        echo "Deploying from: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}"
-        pip install --target=".python_packages/lib/site-packages" -r ../requirements.txt
+        cd ./AzureFunctionDeploy
         python -m pip install --upgrade pip
-    
-    # Create and start virtual environment
-    # - name: Create and start virtual environment
-    #   run: |
-    #     python -m venv venv
-    #     source venv/bin/activate
+        pip install --target=".python_packages/lib/site-packages" -r requirements.txt
+        
     
     # Package the function app into a ZIP file
     - name: 'Zip the Azure Function Deploy folder'
       run: |
         cd AzureFunctionDeploy
-        zip -r ../AzureFunctionDeploy.zip . -x "*.git*" "*.pyc*" 
-    
-    - name: Upload artifact for deployment job
-      uses: actions/upload-artifact@v4
-      with:
-        name: python-app
-        path: |
-          AzureFunctionDeploy.zip
-          !venv/
+        zip -r ../AzureFunctionDeploy.zip ./* 
     
     # Login to Azure
     - name: Azure Login # login to Azure
@@ -65,24 +56,13 @@ jobs:
         az account show
         az group list
 
-    # # Upload artifact for deployment job (optional)
-    - name: Upload ZIP to Azure Blob Storage
-      run: |
-        az storage blob upload \
-          --account-name ${{ env.AZURE_STORAGE_ACCOUNT_NAME }} \
-          --container-name ${{ env.AZURE_CONTAINER_NAME }} \
-          --name AzureFunctionDeploy.zip \
-          --file ./AzureFunctionDeploy.zip \
-          --overwrite \
-          --auth-mode key
-    
     # Deploy directly from the Blob Storage URL
-    - name: Deploy to Azure Function App from Blob URL
+    - name: Build & Deploy to Azure Function App
       run: |
         az functionapp deployment source config-zip \
-          --src ./AzureFunctionDeploy.zip \
           --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
           --name ${{ env.AZURE_FUNCTIONAPP_NAME }} \
+          --src "./AzureFunctionDeploy.zip" \
           --debug
 
     # - name: 'Run Azure Functions Action'
