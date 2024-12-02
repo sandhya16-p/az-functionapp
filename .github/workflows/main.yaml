@@ -42,8 +42,34 @@ jobs:
         cd AzureFunctionDeploy
         zip -r ../AzureFunctionDeploy.zip ./* 
     
+    # Upload ZIP to Azure Blob Storage
+    - name: Upload deployment ZIP to Azure Blob Storage
+      run: |
+        python -m pip install azure-storage-blob
+        python - <<EOF
+        from azure.storage.blob import BlobServiceClient
+        import os
+
+        # Environment variables
+        account_name = "${{ env.AZURE_STORAGE_ACCOUNT_NAME }}"
+        account_key = "${{ secrets.AZURE_STORAGE_ACCOUNT_KEY }}"
+        container_name = "${{ env.AZURE_CONTAINER_NAME }}"
+        zip_file_path = "./AzureFunctionDeploy.zip"
+        blob_name = "AzureFunctionDeploy.zip"
+
+        connection_string = f"DefaultEndpointsProtocol=https;AccountName={account_name};AccountKey={account_key};EndpointSuffix=core.windows.net"
+        blob_service_client = BlobServiceClient.from_connection_string(connection_string)
+
+        container_client = blob_service_client.get_container_client(container_name)
+        blob_client = container_client.get_blob_client(blob_name)
+        with open(zip_file_path, "rb") as data:
+            blob_client.upload_blob(data, overwrite=True)
+
+        print(f"File uploaded to {container_name} as {blob_name}")
+        EOF
+
     # Login to Azure
-    - name: Azure Login # login to Azure
+    - name: Azure Login
       uses: azure/login@v2
       with:
         client-id: ${{ secrets.CLIENT_ID }}
