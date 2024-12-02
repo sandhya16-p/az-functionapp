@@ -73,11 +73,12 @@ jobs:
         run: |
           az account show
           az group list
-      - name: Build & Deploy to Azure Function App
-        run: |
-          az functionapp deployment source config-zip \
-            --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
-            --name ${{ env.AZURE_FUNCTIONAPP_NAME }} \
-            --src "${GITHUB_WORKSPACE}/AzureFunctionDeploy.zip" \
-            --debug
-          
+      
+      - name: E2E Run Azure Functions Action
+        uses: ./
+        id: fa
+        with:
+          app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
+          package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+          remote-build: true
+            
