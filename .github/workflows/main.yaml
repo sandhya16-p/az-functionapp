@@ -81,3 +81,5 @@ jobs:
           app-name: 'backendapi-1'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
+
+          
