@@ -74,12 +74,10 @@ jobs:
           az account show
           az group list
     
-      # Deploy to Azure Function App
-      - name: Build & Deploy to Azure Function App
-        run: |
-          echo "Deploying ZIP file from ${GITHUB_WORKSPACE}/${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}"
-          az functionapp deployment source config-zip \
-            --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
-            --name ${{ env.AZURE_FUNCTIONAPP_NAME }} \
-            --src "${GITHUB_WORKSPACE}/${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}" \
-            --debug
+      - name: 'Deploy to Azure Web App'
+        uses: azure/webapps-deploy@v2
+        id: deploy-to-webapp
+        with:
+          app-name: 'backendapi-1'
+          slot-name: 'Production'
+          publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
