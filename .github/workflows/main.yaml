@@ -33,9 +33,10 @@ jobs:
         mkdir -p AzureFunctionDeploy
         cd ./AzureFunctionDeploy
         python -m pip install --upgrade pip
+        pip install azure-identity
+        pip install azure-storage-blob
         pip install --target=".python_packages/lib/site-packages" -r requirements.txt
-        
-    
+         
     # Package the function app into a ZIP file
     - name: 'Zip the Azure Function Deploy folder'
       run: |
