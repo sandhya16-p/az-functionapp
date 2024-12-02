@@ -56,7 +56,7 @@ jobs:
           path: .
       
       - name: Unzip artifact for deployment
-        run: unzip AzureFunctionDeploy.zip 
+        run: unzip ./AzureFunctionDeploy.zip 
         
         # Login to Azure
       - name: Azure Login
@@ -72,10 +72,12 @@ jobs:
           az account show
           az group list
     
-      - name: 'Deploy to Azure Web App'
-        uses: Azure/functions-action@v1
-        id: deploy-to-webapp
-        with:
-          app-name: 'backendapi-1'
-          slot-name: 'Production'
-          package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+      # Deploy to Azure Function App
+      - name: Build & Deploy to Azure Function App
+        run: |
+          echo "Deploying ZIP file from ${GITHUB_WORKSPACE}/${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}"
+          az functionapp deployment source config-zip \
+            --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+            --name ${{ env.AZURE_FUNCTIONAPP_NAME }} \
+            --src "${GITHUB_WORKSPACE}/${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}" \
+            --debug
