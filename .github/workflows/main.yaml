@@ -56,7 +56,6 @@ jobs:
         az account show
         az group list
 
-    # Deploy directly from the Blob Storage URL
     - name: Build & Deploy to Azure Function App
       run: |
         az functionapp deployment source config-zip \
